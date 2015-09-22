@@ -1,0 +1,24 @@
+LineLength:
+  Max: 200
+SingleSpaceBeforeFirstArg:
+  Enabled: false
+ParenthesesAsGroupedExpression:
+  Enabled: false
+AbcSize:
+  Enabled: false
+MethodLength:
+  Enabled: false
+Documentation:
+  Enabled: false
+PerceivedComplexity:
+  Enabled: false
+CyclomaticComplexity:
+  Enabled: false
+ModuleLength:
+  Enabled: false
+AlignParameters:
+  Enabled: false
+Encoding:
+  Enabled: false
+StringLiterals:
+  Enabled: false

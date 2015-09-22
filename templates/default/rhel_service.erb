@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# /etc/rc.d/init.d/<%= @app_script %>
+#
+# chkconfig: - 95 05
+# description: Log.io is a real-time log monitoring
+
+# . /etc/init.d/functions
+
+export PATH=$PATH:/usr/bin
+export NODE_APP='<%= @app_name %>'
+export USER='<%= @user %>'
+
+start() {
+        su $USER -c "source <%= @nvm_loader %> && pm2 show -s ${NODE_APP} || pm2 start ${NODE_APP} --name ${NODE_APP}"
+}
+stop() {
+        su $USER -c "source <%= @nvm_loader %> && pm2 stop $NODE_APP"
+        su $USER -c "source <%= @nvm_loader %> && pm2 -s delete $NODE_APP"
+}
+restart() {
+        su $USER -c "source <%= @nvm_loader %> && pm2 restart $NODE_APP"
+}
+status() {
+        su $USER -c "source <%= @nvm_loader %> && pm2 show $NODE_APP"
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        echo "Usage: ${0} {start|stop|status|restart}"
+        exit 1
+        ;;
+esac
+exit $?

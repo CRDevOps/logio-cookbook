@@ -1,0 +1,7 @@
+name 'logio'
+maintainer 'Mauricio Araya V.'
+maintainer_email 'hello@mauricioaraya.net'
+license 'All rights reserved'
+description 'Installs/Configures logio'
+long_description 'Installs/Configures logio'
+version '0.1.0'

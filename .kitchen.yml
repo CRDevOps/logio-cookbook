@@ -1,0 +1,23 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: debian-8.0
+    driver:
+      box: chef/debian-8.0
+  - name: ubuntu-14.04
+    driver:
+      box: chef/ubuntu-14.04
+  - name: centos-7.0
+    driver:
+      box: chef/centos-7.0
+
+suites:
+  - name: default
+    run_list:
+      - recipe[logio_test]
+    attributes:
