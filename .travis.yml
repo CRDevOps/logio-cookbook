@@ -1,0 +1,8 @@
+language: ruby
+sudo: false
+cache: bundler
+script:
+  - bundle exec rubocop
+  - bundle exec foodcritic --contex --epic-fail any .
+rvm:
+  - 2.2.0
