@@ -81,4 +81,4 @@ If you need additional help making this work, please [read this post](http://mau
 
 Author & Maintainer:: Mauricio Araya V. (<hello@mauricioaraya.net>)
 
-License:: MIT
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
