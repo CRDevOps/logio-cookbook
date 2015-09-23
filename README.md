@@ -1,6 +1,7 @@
 # Description
 
 [![Code Climate](https://codeclimate.com/github/CRDevOps/logio-cookbook/badges/gpa.svg)](https://codeclimate.com/github/CRDevOps/logio-cookbook)
+[![Build Status](https://travis-ci.org/CRDevOps/logio-cookbook.svg?branch=master)](https://travis-ci.org/CRDevOps/logio-cookbook)
 
 Cookbook logio lets you install and configure [Log.io](http://logio.org/), a real-time log monitoring tool.
 
@@ -46,14 +47,14 @@ This is a LWRP-only cookbook, it means that you should write a wrapper-cookbook 
 
 Let's say you want to monitor your Apache logs, all you have to do is add your access.log and error.log files:
 
-```ruby 
+```ruby
 logio_harvest 'apache_access' do
   stream_name 'apache'
   log_file '/var/log/apache2/access.log'
 end
 ```
 
-```ruby 
+```ruby
 logio_harvest 'apache_error' do
   stream_name 'apache'
   log_file '/var/log/apache2/error.log'
