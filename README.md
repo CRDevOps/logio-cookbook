@@ -1,6 +1,6 @@
 # Description
 
-[![Cookbook Version](http://img.shields.io/cookbook/v/logio.svg)]('http://img.shields.io/cookbook/v/logio.svg)
+[![Code Climate](https://codeclimate.com/github/CRDevOps/logio-cookbook/badges/gpa.svg)](https://codeclimate.com/github/CRDevOps/logio-cookbook)
 
 Cookbook logio lets you install and configure [Log.io](http://logio.org/), a real-time log monitoring tool.
 
