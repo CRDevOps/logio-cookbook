@@ -1,9 +1,9 @@
 language: ruby
 sudo: false
 cache: bundler
-script:
-  - bundle exec rubocop
-  - bundle exec foodcritic --contex --epic-fail any .
-rvm:
-  - 2.2.0
 script: bundle exec rake foodcritic
+rvm:
+- 2.2.0
+notifications:
+  slack:
+    secure: E87hkn+rjz+FYJpplAl7WPj5IcmwYo9AeY71lWJS0PnqK0kvOBQBIUDNZZvD4RTx57VF+BHAddB4fr9y+e7okqHNi37iFlMa3Q9mC+egyw1yX5d1HLQXSLpadMhuljB9wbuJ0asAGBncMBYDxxRS/4cBt11b1o28vOKa7hU/BZj8b1eo3shyAw5VAbd67CxdbaTqekSgjOU2Jv1LLgRrcm/fy1mqzmXkDHX1ZUgTjBI8LRiQEG8fmd9DkyOqgY83ferDpFkoS7FSoq4geF8DPfSR4QraoNTbFiDPJFw3SrfscGvGvuaDSD40ikeFQZenbaR/Todj3gCCwBBIN4tTV5mG0xE2tmEyTBPgS5c1iNegy97IHd22oKL5JRoeAqrZegBkUMJW3ICy/NgyjdZKBIstAWroLhKfrG795JIG7iXjzrqFUJ33j5ScvwOComITPQNrGlVNBQqRibQDdAetTQqRJLM6mo941elWO1ZzJsd6tHGXNXN4hbT/rVdo/Ib23YdrTrj0ohk7v1xT/xF++rcxog6lL0qHfCbt/81fXKhE0R7Ux/L7RJ2wgcIqGhiIjmKErmVsMK410yeYuXzEpU6gHPlxXUuNOIWQdtD7c9E5Ja1brRb0LlNy6gxjuN03UsOzM9N+FjWcCOS96MT/kVJc6NzKwJDdINo128V8r+o=
