@@ -6,3 +6,4 @@ script:
   - bundle exec foodcritic --contex --epic-fail any .
 rvm:
   - 2.2.0
+script: bundle exec rake foodcritic
