@@ -140,25 +140,18 @@ class Chef
                                   }
         logio_cfg_path = "#{user_home}/.log.io"
         prepare_directory(logio_cfg_path)
-
-        template "#{logio_cfg_path}/harvester.json" do
-          cookbook 'logio'
-          source 'json_config.erb'
-          variables ({ json_config: JSON.pretty_generate(harvester_cfg) })
-          owner node['logio']['username']
-          group group_id
-        end
-
-        template "#{user_home}/.log.io/harvester.conf" do
-          cookbook 'logio'
-          source 'load_json_config.erb'
-          variables ({
-            logio_cfg_path: "#{user_home}/.log.io",
-            json_file: 'harvester.json'
-          })
-          owner node['logio']['username']
-          group group_id
-        end
+        file_from_template("#{logio_cfg_path}/harvester.json",
+                           'json_config.erb',
+                           { json_config: JSON.pretty_generate(harvester_cfg) })
+        file_from_template("#{logio_cfg_path}/harvester.json",
+                           'json_config.erb',
+                           { json_config: JSON.pretty_generate(harvester_cfg) })
+        file_from_template("#{user_home}/.log.io/harvester.conf",
+                           'load_json_config.erb',
+                           {
+                             logio_cfg_path: "#{user_home}/.log.io",
+                             json_file: 'harvester.json'
+                           })
       end
 
       def configure_log_server
@@ -169,25 +162,15 @@ class Chef
 
         logio_cfg_path = "#{user_home}/.log.io"
         prepare_directory(logio_cfg_path)
-
-        template "#{logio_cfg_path}/log_server.json" do
-          cookbook 'logio'
-          source 'json_config.erb'
-          variables ({ json_config: JSON.pretty_generate(log_server_cfg) })
-          owner node['logio']['username']
-          group group_id
-        end
-
-        template "#{logio_cfg_path}/log_server.conf" do
-          cookbook 'logio'
-          source 'load_json_config.erb'
-          variables ({
-            logio_cfg_path: "#{user_home}/.log.io",
-            json_file: 'log_server.json'
-          })
-          owner node['logio']['username']
-          group group_id
-        end
+        file_from_template("#{logio_cfg_path}/log_server.json",
+                           'json_config.erb',
+                           { json_config: JSON.pretty_generate(log_server_cfg) })
+        file_from_template("#{logio_cfg_path}/log_server.conf",
+                           load_json_config.erb,
+                           {
+                             logio_cfg_path: "#{user_home}/.log.io",
+                             json_file: 'log_server.json'
+                           })
       end
 
       def configure_web_server
@@ -209,40 +192,25 @@ class Chef
 
         logio_cfg_path = "#{user_home}/.log.io"
         prepare_directory(logio_cfg_path)
-
-        template "#{logio_cfg_path}/web_server.json" do
-          cookbook 'logio'
-          source 'json_config.erb'
-          variables ({ json_config: JSON.pretty_generate(web_server_cfg) })
-          owner node['logio']['username']
-          group group_id
-        end
-
-        template "#{logio_cfg_path}/web_server.conf" do
-          cookbook 'logio'
-          source 'load_json_config.erb'
-          variables ({
-            logio_cfg_path: logio_cfg_path,
-            json_file: 'web_server.json'
-          })
-          owner node['logio']['username']
-          group group_id
-        end
+        file_from_template("#{logio_cfg_path}/web_server.json",
+                           'json_config.erb',
+                           { json_config: JSON.pretty_generate(web_server_cfg) })
+        file_from_template("#{logio_cfg_path}/web_server.conf",
+                           'load_json_config.erb',
+                           {
+                             logio_cfg_path: logio_cfg_path,
+                             json_file: 'web_server.json'
+                           })
       end
 
       def enable_server
-        template '/etc/init.d/logio-server.sh' do
-          cookbook 'logio'
-          source "#{node['platform_family']}_service.erb"
-          variables ({ app_name: 'log.io-server',
-                       app_script: 'logio-server.sh',
-                       user: node['logio']['username'],
-                       nvm_loader: "#{user_home}/.nvm/nvm.sh"
-                    })
-          owner 'root'
-          group 'root'
-          mode '0755'
-        end
+        logio_launcher('/etc/init.d/logio-server.sh',
+                       "#{node['platform_family']}_service.erb",
+                        { app_name: 'log.io-server',
+                          app_script: 'logio-server.sh',
+                          user: node['logio']['username'],
+                          nvm_loader: "#{user_home}/.nvm/nvm.sh"
+                         })
 
         service 'logio-server.sh' do
           supports start: true
@@ -251,19 +219,13 @@ class Chef
         end
       end
 
-      def enable_harvester
-        template '/etc/init.d/logio-harvester.sh' do
-          cookbook 'logio'
-          source "#{node['platform_family']}_service.erb"
-          variables ({ app_name: 'log.io-harvester',
+      logio_launcher('/etc/init.d/logio-harvester.sh',
+                     "#{node['platform_family']}_service.erb",
+                     { app_name: 'log.io-harvester',
                        app_script: 'logio-harvester.sh',
                        user: node['logio']['username'],
                        nvm_loader: "#{user_home}/.nvm/nvm.sh"
-                    })
-          owner 'root'
-          group 'root'
-          mode '0755'
-        end
+                     })
 
         service 'logio-harvester.sh' do
           supports start: true
@@ -282,6 +244,26 @@ class Chef
           action :create
           not_if { ::File.directory? path }
         end
+      end
+
+      def file_from_template(target_file, tpl_source, tpl_vars)
+        template target_file do
+          cookbook 'logio'
+          source tpl_source
+          variables (tpl_vars)
+          owner node['logio']['username']
+          group group_id
+        end
+      end
+
+      def logio_launcher(target_file, tpl_source, tpl_vars)
+        template target_file do
+          cookbook 'logio'
+          source tpl_source
+          variables (tpl_vars)
+          owner 'root'
+          group 'root'
+          mode '0755'
       end
     end
   end
