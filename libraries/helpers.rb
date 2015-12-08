@@ -132,12 +132,7 @@ class Chef
       end
 
       def configure_harvester
-        harvester_cfg = {}
-        harvester_cfg['nodeName'] = node['logio']['client']['node_name']
-        harvester_cfg['logStreams'] = node.run_state['logio_watched_files'].clone if node.run_state.key?('logio_watched_files')
-        harvester_cfg['server'] = { host: node['logio']['client']['remote_host'],
-                                    port: node['logio']['client']['remote_port']
-                                  }
+        harvester_cfg = harvester_config
         logio_cfg_path = "#{user_home}/.log.io"
         prepare_directory(logio_cfg_path)
         file_from_template("#{logio_cfg_path}/harvester.json",
@@ -155,11 +150,7 @@ class Chef
       end
 
       def configure_log_server
-        log_server_cfg = {
-          host: node['logio']['server']['listen_ip'],
-          port: node['logio']['server']['listen_port']
-        }
-
+        log_server_cfg = log_server_config
         logio_cfg_path = "#{user_home}/.log.io"
         prepare_directory(logio_cfg_path)
         file_from_template("#{logio_cfg_path}/log_server.json",
@@ -174,22 +165,7 @@ class Chef
       end
 
       def configure_web_server
-        web_server_cfg = {
-          host: node['logio']['web_server']['listen_host'],
-          port: node['logio']['web_server']['listen_port'],
-          restrictSocket: node['logio']['web_server']['restrict_socket']
-        }
-        web_server_cfg['restrictHTTP'] = node['logio']['web_server']['restrict_http'] unless node['logio']['web_server']['restrict_http'].empty?
-        web_server_cfg['auth'] = {} unless node['logio']['web_server']['username'].nil? ||
-                                           node['logio']['web_server']['password'].nil?
-        web_server_cfg['auth']['user'] = node['logio']['web_server']['username'] unless node['logio']['web_server']['username'].nil?
-        web_server_cfg['auth']['pass'] = node['logio']['web_server']['password'] unless node['logio']['web_server']['password'].nil?
-
-        web_server_cfg['ssl'] = {} unless node['logio']['web_server']['ssl_pkey'].nil? ||
-                                          node['logio']['web_server']['ssl_cert'].nil?
-        web_server_cfg['ssl']['key'] = node['logio']['web_server']['ssl_pkey'] unless node['logio']['web_server']['ssl_pkey'].nil?
-        web_server_cfg['ssl']['cert'] = node['logio']['web_server']['ssl_cert'] unless node['logio']['web_server']['ssl_cert'].nil?
-
+        web_server_cfg = web_server_config
         logio_cfg_path = "#{user_home}/.log.io"
         prepare_directory(logio_cfg_path)
         file_from_template("#{logio_cfg_path}/web_server.json",
@@ -211,7 +187,7 @@ class Chef
                           user: node['logio']['username'],
                           nvm_loader: "#{user_home}/.nvm/nvm.sh"
                          })
-        service_starter('logio-server.sh')
+        service_launcher('logio-server.sh')
       end
 
       def enable_harvester
@@ -222,7 +198,7 @@ class Chef
                          user: node['logio']['username'],
                          nvm_loader: "#{user_home}/.nvm/nvm.sh"
                        })
-        service_starter('logio-harvester.sh')
+        service_launcher('logio-harvester.sh')
       end
 
       private
@@ -258,12 +234,49 @@ class Chef
         end
       end
 
-      def service_starter(logio_service)
+      def service_launcher(logio_service)
         service logio_service do
           supports start: true
           action [:enable, :start]
           notifies :start, "service['#{logio_service}']"
         end
+      end
+
+      def harvester_config
+        harvester_cfg = {}
+        harvester_cfg['nodeName'] = node['logio']['client']['node_name']
+        harvester_cfg['logStreams'] = node.run_state['logio_watched_files'].clone if node.run_state.key?('logio_watched_files')
+        harvester_cfg['server'] = { host: node['logio']['client']['remote_host'],
+                                    port: node['logio']['client']['remote_port']
+                                  }
+        harvester_cfg
+      end
+
+      def log_server_config
+        log_server_cfg = {
+          host: node['logio']['server']['listen_ip'],
+          port: node['logio']['server']['listen_port']
+        }
+        log_server_cfg
+      end
+
+      def web_server_config
+        web_server_cfg = {
+          host: node['logio']['web_server']['listen_host'],
+          port: node['logio']['web_server']['listen_port'],
+          restrictSocket: node['logio']['web_server']['restrict_socket']
+        }
+        web_server_cfg['restrictHTTP'] = node['logio']['web_server']['restrict_http'] unless node['logio']['web_server']['restrict_http'].empty?
+        web_server_cfg['auth'] = {} unless node['logio']['web_server']['username'].nil? ||
+                                           node['logio']['web_server']['password'].nil?
+        web_server_cfg['auth']['user'] = node['logio']['web_server']['username'] unless node['logio']['web_server']['username'].nil?
+        web_server_cfg['auth']['pass'] = node['logio']['web_server']['password'] unless node['logio']['web_server']['password'].nil?
+
+        web_server_cfg['ssl'] = {} unless node['logio']['web_server']['ssl_pkey'].nil? ||
+                                          node['logio']['web_server']['ssl_cert'].nil?
+        web_server_cfg['ssl']['key'] = node['logio']['web_server']['ssl_pkey'] unless node['logio']['web_server']['ssl_pkey'].nil?
+        web_server_cfg['ssl']['cert'] = node['logio']['web_server']['ssl_cert'] unless node['logio']['web_server']['ssl_cert'].nil?
+        web_server_cfg
       end
     end
   end
