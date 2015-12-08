@@ -219,13 +219,14 @@ class Chef
         end
       end
 
-      logio_launcher('/etc/init.d/logio-harvester.sh',
-                     "#{node['platform_family']}_service.erb",
-                     { app_name: 'log.io-harvester',
-                       app_script: 'logio-harvester.sh',
-                       user: node['logio']['username'],
-                       nvm_loader: "#{user_home}/.nvm/nvm.sh"
-                     })
+      def enable_harvester
+        logio_launcher('/etc/init.d/logio-harvester.sh',
+                       "#{node['platform_family']}_service.erb",
+                       { app_name: 'log.io-harvester',
+                         app_script: 'logio-harvester.sh',
+                         user: node['logio']['username'],
+                         nvm_loader: "#{user_home}/.nvm/nvm.sh"
+                       })
 
         service 'logio-harvester.sh' do
           supports start: true
@@ -264,6 +265,7 @@ class Chef
           owner 'root'
           group 'root'
           mode '0755'
+        end
       end
     end
   end
