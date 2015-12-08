@@ -139,12 +139,7 @@ class Chef
                                     port: node['logio']['client']['remote_port']
                                   }
         logio_cfg_path = "#{user_home}/.log.io"
-        directory logio_cfg_path do
-          owner node['logio']['username']
-          group group_id
-          recursive true
-          action :create
-        end
+        prepare_directory(logio_cfg_path)
 
         template "#{logio_cfg_path}/harvester.json" do
           cookbook 'logio'
@@ -173,12 +168,7 @@ class Chef
         }
 
         logio_cfg_path = "#{user_home}/.log.io"
-        directory logio_cfg_path do
-          owner node['logio']['username']
-          group group_id
-          recursive true
-          action :create
-        end
+        prepare_directory(logio_cfg_path)
 
         template "#{logio_cfg_path}/log_server.json" do
           cookbook 'logio'
@@ -218,12 +208,7 @@ class Chef
         web_server_cfg['ssl']['cert'] = node['logio']['web_server']['ssl_cert'] unless node['logio']['web_server']['ssl_cert'].nil?
 
         logio_cfg_path = "#{user_home}/.log.io"
-        directory logio_cfg_path do
-          owner node['logio']['username']
-          group group_id
-          recursive true
-          action :create
-        end
+        prepare_directory(logio_cfg_path)
 
         template "#{logio_cfg_path}/web_server.json" do
           cookbook 'logio'
@@ -284,6 +269,18 @@ class Chef
           supports start: true
           action [:enable, :start]
           notifies :start, 'service[logio-harvester.sh]'
+        end
+      end
+
+      private
+
+      def prepare_directory(path)
+        directory path do
+          owner node['logio']['username']
+          group group_id
+          recursive true
+          action :create
+          not_if { ::File.directory? path }
         end
       end
     end
