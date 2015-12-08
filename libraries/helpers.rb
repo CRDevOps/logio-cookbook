@@ -211,12 +211,7 @@ class Chef
                           user: node['logio']['username'],
                           nvm_loader: "#{user_home}/.nvm/nvm.sh"
                          })
-
-        service 'logio-server.sh' do
-          supports start: true
-          action [:enable, :start]
-          notifies :start, 'service[logio-server.sh]'
-        end
+        service_starter('logio-server.sh')
       end
 
       def enable_harvester
@@ -227,12 +222,7 @@ class Chef
                          user: node['logio']['username'],
                          nvm_loader: "#{user_home}/.nvm/nvm.sh"
                        })
-
-        service 'logio-harvester.sh' do
-          supports start: true
-          action [:enable, :start]
-          notifies :start, 'service[logio-harvester.sh]'
-        end
+        service_starter('logio-harvester.sh')
       end
 
       private
@@ -265,6 +255,14 @@ class Chef
           owner 'root'
           group 'root'
           mode '0755'
+        end
+      end
+
+      def service_starter(logio_service)
+        service logio_service do
+          supports start: true
+          action [:enable, :start]
+          notifies :start, "service['#{logio_service}']"
         end
       end
     end
